@@ -1,24 +1,32 @@
 package com.cloderno.shoppingcart.service.product;
 
+import com.cloderno.shoppingcart.exception.CategoryNotFoundException;
 import com.cloderno.shoppingcart.exception.ProductNotFoundException;
 import com.cloderno.shoppingcart.model.Category;
 import com.cloderno.shoppingcart.model.Product;
+import com.cloderno.shoppingcart.repository.CategoryRepository;
 import com.cloderno.shoppingcart.repository.ProductRepository;
 import com.cloderno.shoppingcart.request.AddProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) {
-        // if category exists
-        return null;
+        Category category = categoryRepository.findById(
+                request.getCategoryId()
+        )
+        .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+
+        return productRepository.save(createProduct(request, category));
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
@@ -40,8 +48,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProductById(Long id) {
-        productRepository.findById(id)
-                .ifPresentOrElse(productRepository::delete, () -> {throw new ProductNotFoundException("Product not found");} );
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        productRepository.delete(product);
     }
 
     @Override
