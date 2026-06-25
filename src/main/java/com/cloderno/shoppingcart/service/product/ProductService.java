@@ -1,11 +1,12 @@
 package com.cloderno.shoppingcart.service.product;
 
 import com.cloderno.shoppingcart.model.Product;
+import com.cloderno.shoppingcart.request.AddProductRequest;
 
 import java.util.List;
 
 public interface ProductService {
-    Product addProduct(Product product);
+    Product addProduct(AddProductRequest product);
     Product getProductById(Long id);
     void deleteProductById(Long id);
     void updateProduct(Long id, Product product);
