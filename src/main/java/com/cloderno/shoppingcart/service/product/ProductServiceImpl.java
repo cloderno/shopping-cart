@@ -42,14 +42,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        return findProductById(id);
     }
 
     @Override
     public void deleteProductById(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        Product product = findProductById(id);
 
         productRepository.delete(product);
     }
@@ -92,5 +90,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    private Product findProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 }
